@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Geography Quiz</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            background-image: linear-gradient(to right, #1e3b723c, #2a52984e),url("qbg.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+        h1 {
+            font-size: 40px;
+            margin-top: 20px;
+            text-shadow: 0 0 5px rgb(25, 3, 82);
+        }
+        .map-container {
+            width: 90%;
+            max-width: 900px;
+            height: 500px;
+            margin: 20px auto;
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.5);
+            background: #000;
+            cursor: grab;
+        }
+        .map-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .question-container {
+            font-size: 24px;
+            background: rgba(255, 255, 255, 0.553);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px auto;
+            width: 80%;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.4);
+            animation: fadeIn 1s ease-in-out;
+            color: #000;
+        }
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px auto;
+            max-width: 800px;
+        }
+        .option-button {
+            background: #05b3e393;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+            flex: 1 1 40%;
+            min-width: 200px;
+        }
+        .option-button:hover {
+            transform: translateY(-5px);
+            background: #0f5261;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        .option-button.correct {
+            background: #4CAF50;
+            animation: pulse 0.5s;
+        }
+        .option-button.incorrect {
+            background: #f44336;
+        }
+        
+        .score-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 26px;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.652);
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+        .country-highlight {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 0, 0.3);
+            border: 2px solid yellow;
+            pointer-events: none;
+            display: none;
+            transform: translate(-50%, -50%);
+        }
+        .feedback-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .feedback-content {
+            background-color: #2a5298;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 80%;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.5s;
+        }
+        .feedback-title {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+        .feedback-text {
+            font-size: 20px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .close-feedback {
+            background: #81e3ea;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        .close-feedback:hover {
+            background: #0f5261;
+            transform: translateY(-2px);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .speaker-icon {
+            margin-left: 10px;
+            cursor: pointer;
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>');
+            background-size: contain;
+            vertical-align: middle;
+        }
+        
+        .back-button {
+    position: absolute;
+    top: 20px;
+    right: 20px; /* Move button to the right */
+    background-color: #007bff; /* Blue color */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 5px 0px 15px rgba(0, 123, 255, 0.6); /* Glow on the right */
+}
+
+.back-button:hover {
+    background-color: #0056b3; /* Darker blue */
+    transform: scale(1.05);
+    box-shadow: 10px 0px 20px rgba(0, 123, 255, 0.8); /* Stronger glow on hover */
+}
+
+    </style>
+</head>
+<body>
+    <a href="geography.html" class="back-button">
+        Back
+      </a>
+    <div class="score-container" id="score">Score: 0</div>
+    <h1>World Geography Quiz</h1>
+    <div class="map-container" id="mapContainer">
+        <img id="worldMap" src="world.jpg" alt="World Map">
+        <div class="country-highlight" id="countryHighlight"></div>
+    </div>
+    <div class="question-container" id="question">
+        <span id="questionText">Loading question...</span>
+        <span class="speaker-icon" id="speakerIcon" onclick="speakCurrentQuestion()"></span>
+    </div>
+    <div class="options" id="options"></div>
+    
+    
+    <div class="feedback-modal" id="feedbackModal">
+        <div class="feedback-content">
+            <h2 class="feedback-title" id="feedbackTitle">Feedback</h2>
+            <p class="feedback-text" id="feedbackText"></p>
+            <button class="close-feedback" onclick="closeFeedback()">Continue</button>
+        </div>
+    </div>
+    
+    <audio id="correctSound" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"></audio>
+    <audio id="wrongSound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
+    
+    <script>
+        const questions = [
+            { 
+                question: "Which country is known as the Land of the Rising Sun?", 
+                options: ["China", "Japan", "South Korea", "India"], 
+                answer: "Japan", 
+                hint: "It has Mount Fuji.",
+                location: { x: 85, y: 45 },
+                feedback: "Japan is called the Land of the Rising Sun because from China it appears that the sun rises from the direction of Japan. The name 'Japan' in Japanese is 'Nihon' or 'Nippon', which literally means 'the sun's origin'."
+            },
+            { 
+                question: "Which is the longest river in the world?", 
+                options: ["Amazon", "Nile", "Yangtze", "Mississippi"], 
+                answer: "Nile", 
+                hint: "It flows through Egypt.",
+                location: { x: 60, y: 50 },
+                feedback: "The Nile River is approximately 6,650 km (4,130 miles) long and flows through 11 countries in northeastern Africa. It has two main tributaries: the White Nile and the Blue Nile. The Nile has been the lifeline of civilization in Egypt for thousands of years."
+            },
+            { 
+                question: "Which desert is the largest in the world?", 
+                options: ["Sahara", "Gobi", "Kalahari", "Atacama"], 
+                answer: "Sahara", 
+                hint: "It is in Africa.",
+                location: { x: 45, y: 45 },
+                feedback: "The Sahara Desert covers about 9.2 million square kilometers (3.6 million square miles) across North Africa, making it roughly the size of China or the United States. Despite its extreme conditions, several million people live in the Sahara, mostly in Egypt, Mauritania, Morocco, and Algeria."
+            },
+            { 
+                question: "Which country has the most time zones?", 
+                options: ["United States", "Russia", "China", "France"], 
+                answer: "France", 
+                hint: "It's due to their overseas territories.",
+                location: { x: 50, y: 45 },
+                feedback: "France has 12 time zones due to its overseas territories around the world. Metropolitan France uses Central European Time (UTC+1), while its territories range from UTC-10 in French Polynesia to UTC+12 in Wallis and Futuna."
+            },
+            { 
+                question: "What is the capital of Canada?", 
+                options: ["Toronto", "Vancouver", "Ottawa", "Montreal"], 
+                answer: "Ottawa", 
+                hint: "It's located in the province of Ontario.",
+                location: { x: 25, y: 35 },
+                feedback: "Ottawa is the capital of Canada, located in the southeastern part of the province of Ontario. It was chosen as the capital in 1857 by Queen Victoria as a compromise between Toronto (English Canada) and Quebec City (French Canada)."
+            },
+            { 
+                question: "Which continent is the most populous?", 
+                options: ["North America", "Europe", "Asia", "Africa"], 
+                answer: "Asia", 
+                hint: "It contains China and India.",
+                location: { x: 75, y: 40 },
+                feedback: "Asia is the most populous continent with about 4.6 billion people, accounting for about 60% of the world's population. It contains the two most populous countries: China (1.4 billion) and India (1.3 billion)."
+            },
+            { 
+                question: "Which of these countries is landlocked?", 
+                options: ["Brazil", "Bolivia", "Peru", "Chile"], 
+                answer: "Bolivia", 
+                hint: "It lost its coastline to Chile in a war.",
+                location: { x: 30, y: 65 },
+                feedback: "Bolivia is a landlocked country in South America. It lost its Pacific coastline to Chile in the War of the Pacific (1879-1884). Bolivia still maintains a navy and celebrates the 'Day of the Sea' each year."
+            },
+            { 
+                question: "Which mountain is the highest in Africa?", 
+                options: ["Mount Kenya", "Mount Kilimanjaro", "Mount Stanley", "Mount Meru"], 
+                answer: "Mount Kilimanjaro", 
+                hint: "It's in Tanzania.",
+                location: { x: 60, y: 60 },
+                feedback: "Mount Kilimanjaro in Tanzania is Africa's highest mountain at 5,895 meters (19,341 feet) above sea level. It's a dormant volcano with three volcanic cones: Kibo, Mawenzi, and Shira."
+            },
+            { 
+                question: "Which ocean is the largest?", 
+                options: ["Atlantic", "Indian", "Pacific", "Arctic"], 
+                answer: "Pacific", 
+                hint: "It covers about one-third of Earth's surface.",
+                location: { x: 15, y: 50 },
+                feedback: "The Pacific Ocean is the largest and deepest ocean, covering about 63 million square miles (165 million square kilometers) - more than all of Earth's land area combined."
+            },
+            { 
+                question: "Which country is both in Europe and Asia?", 
+                options: ["Greece", "Turkey", "Egypt", "Georgia"], 
+                answer: "Turkey", 
+                hint: "Its largest city is Istanbul.",
+                location: { x: 60, y: 40 },
+                feedback: "Turkey is a transcontinental country with territory in both Europe and Asia. Istanbul, its largest city, is divided by the Bosphorus strait which marks the boundary between the two continents."
+            },
+            { 
+                question: "What is the capital of Australia?", 
+                options: ["Sydney", "Melbourne", "Canberra", "Brisbane"], 
+                answer: "Canberra", 
+                hint: "It's not the largest city.",
+                location: { x: 85, y: 70 },
+                feedback: "Canberra is the capital of Australia, located in the Australian Capital Territory. It was chosen as a compromise between rivals Sydney and Melbourne, Australia's two largest cities."
+            },
+            { 
+                question: "Which country has the most islands?", 
+                options: ["Indonesia", "Philippines", "Sweden", "Canada"], 
+                answer: "Sweden", 
+                hint: "It's in Scandinavia.",
+                location: { x: 55, y: 30 },
+                feedback: "Sweden has about 267,570 islands, the most of any country in the world. Most are uninhabited, with only about 1,000 having residents. The Stockholm archipelago alone has over 30,000 islands."
+            },
+            { 
+                question: "Which African country was never colonized?", 
+                options: ["Ethiopia", "South Africa", "Nigeria", "Egypt"], 
+                answer: "Ethiopia", 
+                hint: "It defeated Italy in 1896.",
+                location: { x: 65, y: 50 },
+                feedback: "Ethiopia is the only African country never to have been colonized, successfully resisting Italian attempts in the 1890s. It was briefly occupied by Italy from 1936-1941 but never formally colonized."
+            },
+            { 
+                question: "Which is the world's saltiest sea?", 
+                options: ["Dead Sea", "Red Sea", "Mediterranean Sea", "Caspian Sea"], 
+                answer: "Dead Sea", 
+                hint: "You can float easily in it.",
+                location: { x: 60, y: 45 },
+                feedback: "The Dead Sea is the world's saltiest sea with a salinity of about 34% (10 times saltier than the ocean). Its high salt concentration makes floating effortless. It's actually a lake, not a sea."
+            },
+            { 
+                question: "Which country has the most volcanoes?", 
+                options: ["Indonesia", "Japan", "United States", "Chile"], 
+                answer: "United States", 
+                hint: "Alaska and Hawaii contribute.",
+                location: { x: 20, y: 40 },
+                feedback: "The United States has the most volcanoes of any country, with about 170 potentially active ones. Most are in Alaska, and others are in Hawaii and the Cascade Range. Indonesia has the most active volcanoes."
+            },
+            { 
+                question: "Which city is on two continents?", 
+                options: ["Istanbul", "Cairo", "Moscow", "Dubai"], 
+                answer: "Istanbul", 
+                hint: "It spans Europe and Asia.",
+                location: { x: 60, y: 40 },
+                feedback: "Istanbul, Turkey's largest city, is the only major city spanning two continents (Europe and Asia), divided by the Bosphorus strait. It served as capital of both the Byzantine and Ottoman Empires."
+            },
+            { 
+                question: "Which country has the longest coastline?", 
+                options: ["Russia", "Canada", "Australia", "Norway"], 
+                answer: "Canada", 
+                hint: "It has many islands in the north.",
+                location: { x: 25, y: 35 },
+                feedback: "Canada has the world's longest coastline at 202,080 km (125,570 miles), due to its numerous Arctic islands. If you walked this coastline at 20 km/day, it would take you 27 years to complete!"
+            },
+            { 
+                question: "Which country is the smallest by land area?", 
+                options: ["Monaco", "Vatican City", "San Marino", "Liechtenstein"], 
+                answer: "Vatican City", 
+                hint: "It's the headquarters of the Catholic Church.",
+                location: { x: 53, y: 43 },
+                feedback: "Vatican City is the world's smallest country at just 0.49 km² (0.19 mi²). It's an independent city-state surrounded by Rome, Italy, and is the spiritual center of the Roman Catholic Church."
+            },
+            { 
+                question: "Which river flows through Paris?", 
+                options: ["Thames", "Seine", "Danube", "Rhine"], 
+                answer: "Seine", 
+                hint: "It's in France.",
+                location: { x: 50, y: 45 },
+                feedback: "The Seine River flows through Paris, dividing the city into the Left Bank and Right Bank. It's 777 km long and flows into the English Channel. Many famous landmarks like Notre-Dame are along its banks."
+            },
+            { 
+                question: "Which country has the most official languages?", 
+                options: ["India", "South Africa", "Switzerland", "Bolivia"], 
+                answer: "Bolivia", 
+                hint: "It's in South America.",
+                location: { x: 30, y: 65 },
+                feedback: "Bolivia has 37 official languages, the most of any country. Spanish is most common, followed by Quechua, Aymara, and 34 indigenous languages recognized in the constitution."
+            },
+            { 
+                question: "Which continent has the most countries?", 
+                options: ["Asia", "Africa", "Europe", "South America"], 
+                answer: "Africa", 
+                hint: "It has over 50 nations.",
+                location: { x: 55, y: 50 },
+                feedback: "Africa has 54 recognized sovereign states, the most of any continent. Asia has 48, Europe has 44, and South America has 12. Africa's large number reflects its colonial history and diverse cultures."
+            },
+            { 
+                question: "Which is the deepest lake in the world?", 
+                options: ["Lake Superior", "Lake Baikal", "Caspian Sea", "Lake Tanganyika"], 
+                answer: "Lake Baikal", 
+                hint: "It's in Siberia.",
+                location: { x: 75, y: 40 },
+                feedback: "Lake Baikal in Siberia, Russia is the world's deepest lake at 1,642 m (5,387 ft). It contains about 20% of the world's unfrozen freshwater and is the world's oldest lake at 25-30 million years."
+            },
+            { 
+                question: "Which country has the most pyramids?", 
+                options: ["Egypt", "Sudan", "Mexico", "Peru"], 
+                answer: "Sudan", 
+                hint: "It's south of Egypt.",
+                location: { x: 60, y: 50 },
+                feedback: "Sudan has about 255 pyramids (twice as many as Egypt), built by the ancient Nubian civilization. They're smaller and steeper than Egyptian pyramids, with many located at Meroë."
+            },
+            { 
+                question: "Which is the largest country by area?", 
+                options: ["Canada", "China", "United States", "Russia"], 
+                answer: "Russia", 
+                hint: "It spans Europe and Asia.",
+                location: { x: 70, y: 35 },
+                feedback: "Russia is the world's largest country at 17.1 million km² (6.6 million mi²), covering about 11% of Earth's landmass. It spans 11 time zones and has borders with 14 countries."
+            },
+            { 
+                question: "Which is the largest coral reef system?", 
+                options: ["Maldives Reef", "Great Barrier Reef", "Belize Barrier Reef", "Red Sea Coral Reef"], 
+                answer: "Great Barrier Reef", 
+                hint: "It's off Australia's coast.",
+                location: { x: 85, y: 65 },
+                feedback: "The Great Barrier Reef is the world's largest coral reef system at 2,300 km (1,400 mi) long, visible from space. Located off Australia's coast, it comprises over 2,900 individual reefs and 900 islands."
+            },
+            { 
+                question: "Which country has the most lakes?", 
+                options: ["Finland", "Canada", "Russia", "Sweden"], 
+                answer: "Canada", 
+                hint: "It's in North America.",
+                location: { x: 25, y: 35 },
+                feedback: "Canada has the most lakes of any country, with over 2 million (about 60% of the world's lakes). The Great Lakes contain about 18% of the world's fresh surface water."
+            },
+            { 
+                question: "Which is the world's flattest continent?", 
+                options: ["Africa", "Australia", "Antarctica", "South America"], 
+                answer: "Australia", 
+                hint: "It's also a country.",
+                location: { x: 85, y: 70 },
+                feedback: "Australia is the flattest continent, with an average elevation of just 330 m (1,080 ft). Its highest point (Mount Kosciuszko at 2,228 m) is lower than the highest points of all other continents."
+            },
+            { 
+                question: "Which country has the most borders with other countries?", 
+                options: ["Russia", "China", "Brazil", "France"], 
+                answer: "China", 
+                hint: "It shares borders with 14 nations.",
+                location: { x: 75, y: 45 },
+                feedback: "China shares land borders with 14 countries: Afghanistan, Bhutan, India, Kazakhstan, Kyrgyzstan, Laos, Mongolia, Myanmar, Nepal, North Korea, Pakistan, Russia, Tajikistan, and Vietnam."
+            },
+            { 
+                question: "Which is the world's largest peninsula?", 
+                options: ["Arabian Peninsula", "Indian Peninsula", "Alaska Peninsula", "Scandinavian Peninsula"], 
+                answer: "Arabian Peninsula", 
+                hint: "It contains Saudi Arabia.",
+                location: { x: 65, y: 45 },
+                feedback: "The Arabian Peninsula is the world's largest at about 3.2 million km² (1.25 million mi²). It includes Saudi Arabia, Yemen, Oman, UAE, Qatar, Bahrain, Kuwait, and parts of Jordan and Iraq."
+            },
+            { 
+                question: "Which country has the most UNESCO World Heritage Sites?", 
+                options: ["Italy", "China", "Spain", "France"], 
+                answer: "Italy", 
+                hint: "It's shaped like a boot.",
+                location: { x: 55, y: 45 },
+                feedback: "Italy has the most UNESCO World Heritage Sites with 58, including the Colosseum, Venice, Pompeii, and the Leaning Tower of Pisa. China is second with 56, then Germany with 51."
+            },
+            { 
+                question: "Which is the world's largest island?", 
+                options: ["Greenland", "New Guinea", "Borneo", "Madagascar"], 
+                answer: "Greenland", 
+                hint: "It's an autonomous territory of Denmark.",
+                location: { x: 35, y: 30 },
+                feedback: "Greenland is the world's largest island at 2.16 million km² (836,330 mi²). It's an autonomous territory within the Kingdom of Denmark. Australia is larger but is considered a continent."
+            }
+        ];
+        
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let currentUtterance = null;
+        let shuffledQuestions = [];
+        
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        
+        function loadQuestion() {
+            const question = shuffledQuestions[currentQuestionIndex];
+            document.getElementById("questionText").textContent = question.question;
+            
+            speakQuestion(question.question);
+            
+            const optionsEl = document.getElementById("options");
+            optionsEl.innerHTML = "";
+            
+            const shuffledOptions = shuffleArray([...question.options]);
+            
+            shuffledOptions.forEach(option => {
+                const btn = document.createElement("button");
+                btn.classList.add("option-button");
+                btn.textContent = option;
+                btn.onclick = () => checkAnswer(option);
+                optionsEl.appendChild(btn);
+            });
+            
+            document.getElementById("hint").textContent = "Hint: " + question.hint;
+            document.getElementById("hint").style.display = "none";
+        }
+        
+        function speakQuestion(text) {
+            if (currentUtterance) {
+                window.speechSynthesis.cancel();
+            }
+            
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            currentUtterance.rate = 1.0;
+            currentUtterance.pitch = 1.0;
+            currentUtterance.volume = 1.0;
+            
+            const voices = window.speechSynthesis.getVoices();
+            const preferredVoice = voices.find(v => v.lang.includes('en-US')) || 
+                                 voices.find(v => v.lang.includes('en'));
+            if (preferredVoice) {
+                currentUtterance.voice = preferredVoice;
+            }
+            
+            window.speechSynthesis.speak(currentUtterance);
+        }
+        
+        function speakCurrentQuestion() {
+            const currentQuestion = document.getElementById("questionText").textContent;
+            speakQuestion(currentQuestion);
+        }
+        
+        function playSound(isCorrect) {
+            const sound = document.getElementById(isCorrect ? "correctSound" : "wrongSound");
+            sound.currentTime = 0;
+            sound.play();
+        }
+        
+        function checkAnswer(selected) {
+            const question = shuffledQuestions[currentQuestionIndex];
+            const buttons = document.querySelectorAll('.option-button');
+            
+            if (currentUtterance) {
+                window.speechSynthesis.cancel();
+            }
+            
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === question.answer) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === selected && selected !== question.answer) {
+                    btn.classList.add('incorrect');
+                }
+            });
+            
+            if (selected === question.answer) {
+                score += 10;
+                document.getElementById("score").textContent = "Score: " + score;
+                playSound(true);
+                highlightCountry(question.location);
+                showFeedback(true, question.answer, question.feedback);
+            } else {
+                playSound(false);
+                highlightCountry(question.location);
+                showFeedback(false, question.answer, question.feedback);
+            }
+        }
+        
+        function showFeedback(isCorrect, correctAnswer, feedback) {
+            const modal = document.getElementById("feedbackModal");
+            const title = document.getElementById("feedbackTitle");
+            const text = document.getElementById("feedbackText");
+            
+            if (isCorrect) {
+                title.textContent = "Correct!";
+                title.style.color = "#4CAF50";
+                text.innerHTML = `Well done! The correct answer is <strong>${correctAnswer}</strong>.<br><br>${feedback}`;
+            } else {
+                title.textContent = "Incorrect";
+                title.style.color = "#f44336";
+                text.innerHTML = `The correct answer is <strong>${correctAnswer}</strong>.<br><br>${feedback}`;
+            }
+            
+            modal.style.display = "flex";
+        }
+        
+        function closeFeedback() {
+            document.getElementById("feedbackModal").style.display = "none";
+            currentQuestionIndex = (currentQuestionIndex + 1) % shuffledQuestions.length;
+            
+            if (currentQuestionIndex === 0) {
+                shuffledQuestions = shuffleArray([...questions]);
+            }
+            
+            loadQuestion();
+        }
+        
+        function highlightCountry(location) {
+            const highlight = document.getElementById("countryHighlight");
+            highlight.style.display = "block";
+            highlight.style.left = location.x + "%";
+            highlight.style.top = location.y + "%";
+            highlight.style.width = "60px";
+            highlight.style.height = "60px";
+            
+            setTimeout(() => {
+                highlight.style.display = "none";
+            }, 2500);
+        }
+        
+        function showHint() {
+            document.getElementById("hint").style.display = "block";
+        }
+        
+        const map = document.getElementById("worldMap");
+        let scale = 1;
+        map.addEventListener("wheel", function(event) {
+            event.preventDefault();
+            scale += event.deltaY * -0.002;
+            scale = Math.min(Math.max(1, scale), 3);
+            map.style.transform = `scale(${scale})`;
+        });
+        
+        function initializeVoices() {
+            if (window.speechSynthesis.getVoices().length > 0) {
+                shuffledQuestions = shuffleArray([...questions]);
+                loadQuestion();
+            } else {
+                window.speechSynthesis.onvoiceschanged = function() {
+                    shuffledQuestions = shuffleArray([...questions]);
+                    loadQuestion();
+                };
+            }
+        }
+        
+        window.onload = function() {
+            setTimeout(initializeVoices, 200);
+        };
+    </script>
+</body>
+</html>

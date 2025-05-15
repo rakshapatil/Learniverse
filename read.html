@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Indian Political Science - Read to Learn</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      color: #333;
+      background-image: linear-gradient(to right, #1e3b723c, #2a52984e),url("law.jpg");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    .read-to-learn-container {
+      max-width: 800px;
+      margin: 20px auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .reading-header {
+      padding: 20px;
+      background: #FF9933; /* Saffron */
+      color: white;
+      text-align: center;
+    }
+
+    .progress-bar {
+      height: 5px;
+      background: #e0e0e0;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #138808; /* Green */
+      border-radius: 5px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .reading-content {
+      padding: 20px;
+      max-height: 60vh;
+      overflow-y: auto;
+      line-height: 1.6;
+    }
+
+    .key-term {
+      color: #000080; /* Navy Blue */
+      cursor: pointer;
+      text-decoration: underline dotted;
+      font-weight: bold;
+    }
+
+    .key-term:hover {
+      color: #1E3F8B;
+    }
+
+    .term-popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .popup-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 80%;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .reading-footer {
+      padding: 15px;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #ddd;
+    }
+
+    .quiz-controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    .quiz-score {
+      font-weight: bold;
+      color: #138808; /* Green */
+    }
+
+    .inline-quiz {
+      background: #f0f8ff;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border: 1px solid #ddd;
+    }
+
+    .content-image {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .content-image img {
+      max-width: 100%;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .image-caption {
+      font-style: italic;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    button {
+      background: #000080; /* Navy Blue */
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #1E3F8B;
+    }
+
+    button:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+    }
+
+    label {
+      display: block;
+      margin: 8px 0;
+      cursor: pointer;
+    }
+
+    input[type="radio"] {
+      margin-right: 8px;
+    }
+
+    .quiz-feedback {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      display: none;
+    }
+
+    .correct {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .incorrect {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+   
+    .back-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      box-shadow: 5px 0px 15px rgba(0, 123, 255, 0.6);
+    }
+
+    .back-button:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+      box-shadow: 10px 0px 20px rgba(0, 123, 255, 0.8);
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-button">
+    Back
+  </a>
+  <div class="read-to-learn-container">
+    <div class="reading-header">
+      <h1 id="content-title">Indian Political System</h1>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+    <div class="reading-content" id="reading-content">
+      <!-- Content will be loaded here by JavaScript -->
+    </div>
+
+    <div class="reading-footer">
+      <div class="quiz-controls">
+        <button id="quiz-toggle">Start Quiz</button>
+        <button id="next-question" disabled>Next Question</button>
+      </div>
+      <div class="quiz-score" id="quiz-score"></div>
+    </div>
+  </div>
+
+  <!-- Term Popup -->
+  <div class="term-popup" id="term-popup">
+    <div class="popup-content">
+      <h3 id="popup-term"></h3>
+      <p id="popup-definition"></p>
+      <button onclick="closePopup()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    // Indian Political Science Content with 5 Quiz Questions
+    const contentData = {
+      "indian-constitution": {
+        "id": "indian-constitution",
+        "title": "The Indian Constitution",
+        "category": "political-science",
+        "text": [
+          {
+            "type": "paragraph",
+            "content": "The {Constitution of India} is the supreme law of India, adopted on {November 26, 1949} and came into effect on {January 26, 1950}."
+          },
+          {
+            "type": "paragraph",
+            "content": "It establishes India as a {sovereign, socialist, secular, democratic republic} and contains {fundamental rights}, {directive principles}, and {fundamental duties} of citizens."
+          },
+          {
+            "type": "image",
+            "url": "indianconst.jpg",
+            "caption": "Original copy of the Constitution of India"
+          },
+          {
+            "type": "quiz",
+            "question": "What does the term 'sovereign' mean in the Indian Constitution context?",
+            "options": [
+              "India is dependent on other countries",
+              "India is free to govern itself without external interference",
+              "India follows religious laws",
+              "India has a monarchy system"
+            ],
+            "correct": 1,
+            "explanation": "Sovereign means India is an independent nation and not under the control of any foreign power."
+          },
+          {
+            "type": "paragraph",
+            "content": "The constitution provides for a {parliamentary system} of government with a {President} as head of state and {Prime Minister} as head of government."
+          },
+          {
+            "type": "quiz",
+            "question": "Which date is celebrated as Republic Day in India?",
+            "options": [
+              "August 15, 1947",
+              "November 26, 1949",
+              "January 26, 1950",
+              "January 30, 1948"
+            ],
+            "correct": 2,
+            "explanation": "January 26, 1950 is when the Constitution came into effect, marking India's transition to a republic."
+          },
+          {
+            "type": "quiz",
+            "question": "What are Fundamental Rights in the Indian Constitution?",
+            "options": [
+              "Guidelines for government policy making",
+              "Basic human rights guaranteed to all citizens",
+              "Duties of citizens towards the nation",
+              "Special privileges for government officials"
+            ],
+            "correct": 1,
+            "explanation": "Fundamental Rights (Articles 12-35) are basic human rights guaranteed to all citizens."
+          },
+          {
+            "type": "quiz",
+            "question": "What is the role of the President in India's parliamentary system?",
+            "options": [
+              "Head of government who runs daily administration",
+              "Constitutional head of state with ceremonial functions",
+              "Leader of the ruling political party",
+              "Chief justice of the Supreme Court"
+            ],
+            "correct": 1,
+            "explanation": "The President is the constitutional head of state while real executive power lies with the Prime Minister."
+          },
+          {
+            "type": "quiz",
+            "question": "What do Directive Principles of State Policy represent?",
+            "options": [
+              "Laws that citizens must follow",
+              "Guidelines for the government to establish social justice",
+              "Rules for conducting elections",
+              "Powers of the judiciary"
+            ],
+            "correct": 1,
+            "explanation": "Directive Principles (Articles 36-51) are guidelines for the state to establish a just society."
+          }
+        ],
+        "keyTerms": {
+          "Constitution of India": "The supreme legal document that frames the political principles, establishes the structure, procedures, powers and duties of government institutions",
+          "November 26, 1949": "Date when the Constitution was adopted by the Constituent Assembly",
+          "January 26, 1950": "Date when the Constitution came into effect, celebrated as Republic Day",
+          "sovereign, socialist, secular, democratic republic": "The four key words added to the preamble through the 42nd Amendment",
+          "fundamental rights": "Basic human rights guaranteed to all citizens (Articles 12-35)",
+          "directive principles": "Guidelines for the state to establish a just society (Articles 36-51)",
+          "fundamental duties": "Moral obligations of all citizens (Article 51A)",
+          "parliamentary system": "System where the executive derives its legitimacy from and is accountable to the legislature",
+          "President": "The constitutional head of India (Article 52)",
+          "Prime Minister": "The real executive head who leads the Council of Ministers"
+        }
+      }
+    };
+
+    // DOM Elements
+    const readingContent = document.getElementById('reading-content');
+    const contentTitle = document.getElementById('content-title');
+    const progressFill = document.getElementById('progress-fill');
+    const quizToggle = document.getElementById('quiz-toggle');
+    const nextQuestionBtn = document.getElementById('next-question');
+    const quizScore = document.getElementById('quiz-score');
+    const termPopup = document.getElementById('term-popup');
+    const popupTerm = document.getElementById('popup-term');
+    const popupDefinition = document.getElementById('popup-definition');
+
+    // State variables
+    let quizAnswers = {};
+    let showQuiz = false;
+    let score = 0;
+    let currentQuizIndex = -1;
+    let quizElements = [];
+
+    // Initialize the app
+    function init() {
+      loadContent('indian-constitution');
+      document.getElementById('reading-content').addEventListener('scroll', updateProgress);
+      quizToggle.addEventListener('click', startQuiz);
+      nextQuestionBtn.addEventListener('click', showNextQuestion);
+    }
+
+    // Load content
+    function loadContent(topicId) {
+      const content = contentData[topicId];
+      if (!content) return;
+      
+      contentTitle.textContent = content.title;
+      readingContent.innerHTML = '';
+      
+      content.text.forEach((item, index) => {
+        if (item.type === "paragraph") {
+          const paragraph = document.createElement('p');
+          paragraph.innerHTML = processTextWithTerms(item.content, content.keyTerms);
+          readingContent.appendChild(paragraph);
+        } else if (item.type === "image") {
+          const imageDiv = document.createElement('div');
+          imageDiv.className = 'content-image';
+          
+          const img = document.createElement('img');
+          img.src = item.url;
+          img.alt = item.caption;
+          
+          const caption = document.createElement('p');
+          caption.className = 'image-caption';
+          caption.textContent = item.caption;
+          
+          imageDiv.appendChild(img);
+          imageDiv.appendChild(caption);
+          readingContent.appendChild(imageDiv);
+        } else if (item.type === "quiz") {
+          const quizDiv = document.createElement('div');
+          quizDiv.className = 'inline-quiz';
+          quizDiv.style.display = 'none';
+          quizDiv.id = `quiz-${index}`;
+          
+          const question = document.createElement('h4');
+          question.textContent = item.question;
+          quizDiv.appendChild(question);
+          
+          item.options.forEach((option, optIndex) => {
+            const label = document.createElement('label');
+            
+            const input = document.createElement('input');
+            input.type = 'radio';
+            input.name = `quiz-${index}`;
+            input.value = optIndex;
+            input.addEventListener('change', () => handleQuizAnswer(index, optIndex, item.correct));
+            
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(option));
+            quizDiv.appendChild(label);
+          });
+
+          const feedback = document.createElement('div');
+          feedback.className = 'quiz-feedback';
+          feedback.id = `feedback-${index}`;
+          quizDiv.appendChild(feedback);
+          
+          readingContent.appendChild(quizDiv);
+          quizElements.push(quizDiv);
+        }
+      });
+    }
+
+    // Start the quiz
+    function startQuiz() {
+      showQuiz = true;
+      quizToggle.textContent = 'End Quiz';
+      quizToggle.removeEventListener('click', startQuiz);
+      quizToggle.addEventListener('click', endQuiz);
+      currentQuizIndex = -1;
+      showNextQuestion();
+    }
+
+    // End the quiz
+    function endQuiz() {
+      showQuiz = false;
+      quizToggle.textContent = 'Restart Quiz';
+      quizToggle.removeEventListener('click', endQuiz);
+      quizToggle.addEventListener('click', startQuiz);
+      nextQuestionBtn.disabled = true;
+      
+      // Hide all quizzes
+      quizElements.forEach(quiz => {
+        quiz.style.display = 'none';
+      });
+      
+      // Show final score
+      const totalQuizzes = quizElements.length;
+      quizScore.textContent = `Final Score: ${score}/${totalQuizzes}`;
+      
+      // Reset for next attempt
+      score = 0;
+      quizAnswers = {};
+      currentQuizIndex = -1;
+    }
+
+    // Show next question
+    function showNextQuestion() {
+      // Hide current quiz
+      if (currentQuizIndex >= 0) {
+        quizElements[currentQuizIndex].style.display = 'none';
+      }
+      
+      // Show next quiz
+      currentQuizIndex++;
+      if (currentQuizIndex < quizElements.length) {
+        quizElements[currentQuizIndex].style.display = 'block';
+        nextQuestionBtn.disabled = true;
+        
+        // Update quiz progress
+        quizScore.textContent = `Question ${currentQuizIndex + 1} of ${quizElements.length}`;
+        
+        // Scroll to the question
+        quizElements[currentQuizIndex].scrollIntoView({ behavior: 'smooth' });
+      } else {
+        endQuiz();
+      }
+    }
+
+    // Process text to make key terms clickable
+    function processTextWithTerms(text, keyTerms) {
+      return text.split(/(\{[^}]+\})/).map((part, i) => {
+        if (part.startsWith('{') && part.endsWith('}')) {
+          const term = part.slice(1, -1);
+          if (keyTerms[term]) {
+            return `<span class="key-term" onclick="showTermPopup('${term}')">${term}</span>`;
+          }
+        }
+        return part;
+      }).join('');
+    }
+
+    // Update reading progress
+    function updateProgress() {
+      const scrollTop = readingContent.scrollTop;
+      const scrollHeight = readingContent.scrollHeight - readingContent.clientHeight;
+      const newProgress = Math.round((scrollTop / scrollHeight) * 100);
+      progressFill.style.width = `${newProgress}%`;
+    }
+
+    // Handle quiz answer selection
+    function handleQuizAnswer(questionIndex, answerIndex, correctAnswer) {
+      quizAnswers[questionIndex] = answerIndex;
+      const feedback = document.getElementById(`feedback-${questionIndex}`);
+      
+      if (answerIndex === correctAnswer) {
+        feedback.textContent = "✓ Correct! " + contentData['indian-constitution'].text[questionIndex].explanation;
+        feedback.className = "quiz-feedback correct";
+        if (!feedback.previousSibling.checked) { // Only increase score if not previously answered
+          score++;
+        }
+      } else {
+        feedback.textContent = "✗ Incorrect. " + contentData['indian-constitution'].text[questionIndex].explanation;
+        feedback.className = "quiz-feedback incorrect";
+      }
+      
+      feedback.style.display = 'block';
+      nextQuestionBtn.disabled = false;
+      
+      // Update score display
+      quizScore.textContent = `Score: ${score}/${quizElements.length}`;
+    }
+
+    // Show term popup
+    function showTermPopup(term) {
+      const content = contentData['indian-constitution'];
+      popupTerm.textContent = term;
+      popupDefinition.textContent = content.keyTerms[term] || 'Definition not found';
+      termPopup.style.display = 'flex';
+    }
+
+    // Close popup
+    function closePopup() {
+      termPopup.style.display = 'none';
+    }
+
+    // Make functions available globally
+    window.showTermPopup = showTermPopup;
+    window.closePopup = closePopup;
+
+    // Initialize when page loads
+    window.onload = init;
+  </script>
+</body>
+</html>
